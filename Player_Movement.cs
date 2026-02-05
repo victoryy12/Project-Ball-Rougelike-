@@ -1,23 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class Player_Movement : MonoBehaviour
 {
-    // Speed variable you can adjust in the Unity Inspector
-    public float speed = 10f;
+ // Rigidbody of the player.
+ private Rigidbody rb; 
 
-    void Update()
+ // Movement along X and Y axes.
+ private float movementX;
+ private float movementY;
+
+ // Speed at which the player moves.
+ public float speed = 0; 
+
+ // Start is called before the first frame update.
+ void Start()
     {
-        // Get input from WASD or Arrow keys
-        // These return a value between -1 and 1
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+ // Get and store the Rigidbody component attached to the player.
+        rb = GetComponent<Rigidbody>();
+    }
+ 
+ // This function is called when a move input is detected.
+ void OnMove(InputValue movementValue)
+    {
+ // Convert the input value into a Vector2 for movement.
+        Vector2 movementVector = movementValue.Get<Vector2>();
 
-        // Create a direction vector based on input
-        Vector3 direction = new Vector3(horizontalInput, 0, verticalInput);
+ // Store the X and Y components of the movement.
+        movementX = movementVector.x; 
+        movementY = movementVector.y; 
+    }
 
-        // Move the object 
-        // transform.Translate moves the object relative to its local orientation
-        // Time.deltaTime ensures movement is smooth and frame-rate independent
-        transform.Translate(direction * speed * Time.deltaTime);
+ // FixedUpdate is called once per fixed frame-rate frame.
+ private void FixedUpdate() 
+    {
+ // Create a 3D movement vector using the X and Y inputs.
+        Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
+
+ // Apply force to the Rigidbody to move the player.
+        rb.AddForce(movement * speed); 
     }
 }
